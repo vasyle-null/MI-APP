@@ -75,8 +75,9 @@ function loadState() {
     } catch(e) {
       state = {};
     }
-  } else {
-    // Demo data
+  } 
+  // NUEVO: Siempre aseguramos que haya al menos un trabajo demo si no hay trabajos
+  if (!state.jobs || !Array.isArray(state.jobs) || state.jobs.length === 0) {
     state.jobs = DEMO_JOBS;
     state.activeJobId = state.jobs[0].id;
     state.running = null;
@@ -577,72 +578,4 @@ document.getElementById('export-csv-btn').onclick = () => {
   a.download = `${job.name.replace(/\s+/g,"_")}_records.csv`;
   document.body.appendChild(a);
   a.click();
-  a.remove();
-};
-
-document.getElementById('export-pdf-btn').onclick = () => {
-  // Send data via fetch to backend /export-pdf, receive blob
-  const job = getActiveJob();
-  fetch("http://127.0.0.1:5000/export-pdf", {
-    method:"POST",
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      job: {
-        name: job.name,
-        salary: job.salary,
-        currency: job.currency,
-        payment_type: job.payment_type,
-        period: job.period
-      },
-      records: job.records
-    })
-  }).then(r=>r.blob()).then(blob=>{
-    let a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `${job.name.replace(/\s+/g,"_")}_records.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setExportStatus('PDF exported!');
-  }).catch(e=>{
-    setExportStatus('PDF export failed. Is the backend running?');
-  });
-};
-function setExportStatus(msg) {
-  document.getElementById('export-status').textContent = msg;
-  setTimeout(()=>{ document.getElementById('export-status').textContent=""; }, 3500);
-}
-
-// =============== MODAL HANDLING ===============
-function showModal(id) {
-  document.getElementById('modal-bg').hidden = false;
-  document.getElementById(id).hidden = false;
-}
-function hideModal() {
-  document.getElementById('modal-bg').hidden = true;
-  document.querySelectorAll('.modal').forEach(m=>m.hidden=true);
-}
-document.getElementById('modal-bg').onclick = hideModal;
-
-// =============== RENDER EVERYTHING ===============
-function render() {
-  renderJobSelector();
-  renderClockInPage();
-  renderHistoryPage();
-  renderJobsList();
-}
-render();
-
-// =============== LIVE CLOCKIN TIMER (optional) ===============
-setInterval(()=>{
-  // If running, update clockin page numbers
-  if (state.running && state.running.running) {
-    renderClockInPage();
-  }
-}, 30*1000);
-
-// =============== DEMO: INIT WITH DATA ===============
-// Already handled in loadState if empty
-
-// =============== BACKEND PDF (Flask) REMINDER ===============
-// User must run the backend for PDF export to work
+  a.remove
