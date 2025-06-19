@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Time Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Main App -->
+  <div id="app">
+    <!-- Pages -->
+    <div id="pages">
+      <!-- Clock In Page -->
+      <section id="page-clockin" class="page active">
+        <header>
+          <select id="job-selector"></select>
+          <button id="edit-jobs-btn" title="Edit Jobs">&#x270E;</button>
+        </header>
+        <div class="clockin-main">
+          <div class="hours">
+            <span id="total-hours">0:00</span>
+            <div class="label">Total Hours</div>
+          </div>
+          <div class="earnings">
+            <span id="total-earnings">$0.00</span>
+            <div class="label">Estimated Earnings</div>
+          </div>
+          <div class="actions">
+            <button id="clockin-btn" class="main-action">Clock In</button>
+            <button id="start-break-btn">Start Break</button>
+            <button id="end-break-btn">End Break</button>
+            <button id="clockout-btn" class="warn">Clock Out</button>
+            <button id="manual-entry-btn" class="outline">Add Manual Entry</button>
+          </div>
+        </div>
+      </section>
+      <!-- Hours (History) Page -->
+      <section id="page-hours" class="page">
+        <header>
+          <div class="tabs">
+            <button class="tab active" data-period="week">Week</button>
+            <button class="tab" data-period="biweekly">Biweekly</button>
+            <button class="tab" data-period="month">Month</button>
+          </div>
+          <button id="close-period-btn" class="outline">Close Period</button>
+        </header>
+        <div id="history-list"></div>
+        <div class="closed-periods">
+          <h4>Closed Periods</h4>
+          <div id="closed-periods-list"></div>
+        </div>
+      </section>
+      <!-- Settings Page -->
+      <section id="page-settings" class="page">
+        <div class="settings-block">
+          <div class="toggle-row">
+            <span>Dark Mode</span>
+            <label class="switch">
+              <input type="checkbox" id="darkmode-toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-block">
+          <div class="block-header">
+            <span>My Jobs</span>
+            <button id="add-job-btn" class="circle">+</button>
+          </div>
+          <ul id="jobs-list"></ul>
+        </div>
+      </section>
+      <!-- Export Data Page -->
+      <section id="page-export" class="page">
+        <div class="export-block">
+          <button id="export-csv-btn" class="main-action">Export CSV</button>
+          <button id="export-pdf-btn" class="main-action">Export PDF</button>
+          <button class="outline" disabled>
+            <span class="icon">&#x2601;</span> Sync with Cloud (In Progress)
+          </button>
+        </div>
+        <div id="export-status"></div>
+      </section>
+    </div>
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav">
+      <button data-page="clockin" class="nav-btn active" title="Clock In">
+        <span class="nav-icon">
+          <!-- Clock SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <span class="nav-label">Clock In</span>
+      </button>
+      <button data-page="hours" class="nav-btn" title="Hours">
+        <span class="nav-icon">
+          <!-- List SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="2" rx="1" fill="currentColor"/><rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/><rect x="4" y="15" width="10" height="2" rx="1" fill="currentColor"/></svg>
+        </span>
+        <span class="nav-label">Hours</span>
+      </button>
+      <button data-page="settings" class="nav-btn" title="Settings">
+        <span class="nav-icon">
+          <!-- Gear SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        <span class="nav-label">Settings</span>
+      </button>
+      <button data-page="export" class="nav-btn" title="Export">
+        <span class="nav-icon">
+          <!-- Export SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 17V3M12 3l-5 5M12 3l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="19" width="14" height="2" rx="1" fill="currentColor"/></svg>
+        </span>
+        <span class="nav-label">Export</span>
+      </button>
+    </nav>
+  </div>
+  <!-- Modals -->
+  <div id="modal-bg" hidden></div>
+  <div id="modal-manual-entry" class="modal" hidden>
+    <form id="manual-entry-form">
+      <h3>Add Manual Entry</h3>
+      <label>
+        Date
+        <input type="date" name="date" required>
+      </label>
+      <label>
+        Start Time
+        <input type="time" name="start" required>
+      </label>
+      <label>
+        End Time
+        <input type="time" name="end" required>
+      </label>
+      <label>
+        Break (minutes)
+        <input type="number" name="break" min="0" value="0" required>
+      </label>
+      <button type="submit" class="main-action">Add Entry</button>
+      <button type="button" class="outline" id="cancel-manual-entry">Cancel</button>
+    </form>
+  </div>
+  <div id="modal-job" class="modal" hidden>
+    <form id="job-form">
+      <h3 id="job-form-title">New Job</h3>
+      <label>
+        Name
+        <input type="text" name="name" maxlength="32" required>
+      </label>
+      <label>
+        Salary
+        <input type="number" name="salary" min="0" step="0.01" required>
+      </label>
+      <label>
+        Currency
+        <input type="text" name="currency" maxlength="4" required value="$">
+      </label>
+      <label>
+        Payment Type
+        <select name="payment_type" required>
+          <option value="hour">Per Hour</option>
+          <option value="month">Per Month</option>
+        </select>
+      </label>
+      <label>
+        Period
+        <select name="period" required>
+          <option value="week">Weekly</option>
+          <option value="biweekly">Biweekly</option>
+          <option value="month">Monthly</option>
+        </select>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="main-action">Save</button>
+        <button type="button" class="outline" id="cancel-job">Cancel</button>
+        <button type="button" class="warn" id="delete-job" hidden>Delete</button>
+      </div>
+    </form>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
